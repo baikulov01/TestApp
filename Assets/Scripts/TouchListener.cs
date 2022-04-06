@@ -34,7 +34,6 @@ public class TouchListener : MonoBehaviour
             {
                 return;
             }
-            Debug.Log(Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
             Instantiate(mark, Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 1.0f)), Quaternion.identity);
         }
 

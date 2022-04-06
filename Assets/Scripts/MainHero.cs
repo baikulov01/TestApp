@@ -33,16 +33,7 @@ public class MainHero : MonoBehaviour
             }
             if (touch.phase == TouchPhase.Ended)
             {
-                if (!hasTarget)
-                {
-                    hasTarget = true;
-                    currentTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                    currentTarget.z = transform.position.z;
-                }
-                else
-                {
-                    movementQueue.Enqueue(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                }
+                movementQueue.Enqueue(Camera.main.ScreenToWorldPoint(Input.mousePosition));
             }
         }
 
@@ -52,28 +43,26 @@ public class MainHero : MonoBehaviour
             {
                 return;
             }
-            if (!hasTarget)
-            {
-                hasTarget = true;
-                currentTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                currentTarget.z = transform.position.z;
-            }
-            else
-            {
-                movementQueue.Enqueue(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-            }
+            movementQueue.Enqueue(Camera.main.ScreenToWorldPoint(Input.mousePosition));
 
         }
 
-        if (hasTarget)
+        if (!hasTarget)
+        {
+            if (movementQueue.Count > 0)
+            {
+                hasTarget = true;
+                currentTarget = movementQueue.Dequeue();
+                isMoving = true;
+            } else
+            {
+                isMoving = false;
+            }
+        } else
         {
             isMoving = true;
         }
-        else if(movementQueue.Count > 0)
-        {
-            currentTarget = movementQueue.Dequeue();
-            hasTarget = true;
-        }
+
 
         if (isMoving)
         {
@@ -88,10 +77,7 @@ public class MainHero : MonoBehaviour
         if (transform.position == currentTarget)
         {
             hasTarget = false;
-            isMoving = false;
-
-
-            startPosition = transform.position;
+            isMoving = false;           
         }
     }
 
