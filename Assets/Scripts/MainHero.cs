@@ -10,7 +10,11 @@ public class MainHero : MonoBehaviour
     public float movementSpeed;
     public bool isMoving;
 
+    public string firstCollectedObjectName;
+    public string lastCollectedObjectName;
+
     public Queue<Vector2> movementQueue;
+    public int squaresLeft;
 
 
     // Start is called before the first frame update
@@ -18,9 +22,8 @@ public class MainHero : MonoBehaviour
     {
         movementQueue = new Queue<Vector2>();
         startPosition = transform.position;
+        squaresLeft = Camera.main.GetComponent<SquaresCreater>().numberOfObjects+4;
     }
-
-
 
     void Update()
     {
@@ -79,6 +82,45 @@ public class MainHero : MonoBehaviour
             hasTarget = false;
             isMoving = false;           
         }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        string objectName = collision.gameObject.name;
+
+        if (firstCollectedObjectName.Equals(string.Empty))
+        {
+            firstCollectedObjectName = objectName;
+        }
+        if (squaresLeft==1)
+        {
+            lastCollectedObjectName = objectName;
+        }
+
+        switch (objectName)
+        {
+            case "RedSquare":
+                if (gameObject.transform.localScale.x > 0.4f)
+                {
+                    gameObject.transform.localScale -= new Vector3(0.15f, 0.15f, 0);
+                }
+                break;
+            case "BlueSquare":
+                gameObject.transform.localScale += new Vector3(0.15f, 0.15f, 0);
+                break;
+            case "GreenSquare":
+                if (firstCollectedObjectName.Equals("GreenSquare"))
+                {
+                    Camera.main.GetComponent<TouchCounter>().touchCount--;
+                } 
+                else if (lastCollectedObjectName.Equals("GreenSquare"))
+                {
+                    Camera.main.GetComponent<TouchCounter>().touchCount++;
+                }
+                break;
+        }
+        Destroy(collision.gameObject);
+        squaresLeft--;
     }
 
 }
