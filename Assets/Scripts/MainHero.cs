@@ -22,7 +22,7 @@ public class MainHero : MonoBehaviour
     {
         movementQueue = new Queue<Vector2>();
         startPosition = transform.position;
-        squaresLeft = Camera.main.GetComponent<SquaresCreater>().numberOfObjects+4;
+        squaresLeft = Camera.main.GetComponent<SquaresCreater>().objectsNumber+4;
     }
 
     void Update()
@@ -80,13 +80,15 @@ public class MainHero : MonoBehaviour
         if (transform.position == currentTarget)
         {
             hasTarget = false;
-            isMoving = false;           
+            isMoving = false;
+            startPosition = transform.position;
         }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         string objectName = collision.gameObject.name;
+
 
         if (firstCollectedObjectName.Equals(string.Empty))
         {
@@ -99,6 +101,21 @@ public class MainHero : MonoBehaviour
 
         switch (objectName)
         {
+            case "Triangle":
+                isMoving = false;
+                transform.position = startPosition;
+                startPosition = transform.position;
+                hasTarget = false;
+                while (movementQueue.Count > 0)
+                {
+                    movementQueue.Dequeue();
+                }
+                GameObject[] marks = GameObject.FindGameObjectsWithTag("mark");
+                foreach (var item in marks)
+                {
+                    Destroy(item);
+                }
+                break;
             case "RedSquare":
                 if (gameObject.transform.localScale.x > 0.4f)
                 {
@@ -119,8 +136,12 @@ public class MainHero : MonoBehaviour
                 }
                 break;
         }
-        Destroy(collision.gameObject);
-        squaresLeft--;
+
+        if (!objectName.Equals("Triangle"))
+        {
+            Destroy(collision.gameObject);
+            squaresLeft--;
+        }      
     }
 
 }

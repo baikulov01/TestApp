@@ -9,7 +9,7 @@ public class SquaresCreater : MonoBehaviour
     public GameObject greenSquare;
     public GameObject blueSquare;
 
-    public int numberOfObjects;
+    public int objectsNumber;
     int grayCount = 1;
     int redCount = 1;
     int blueCount = 1;
@@ -23,9 +23,9 @@ public class SquaresCreater : MonoBehaviour
         width = Camera.main.pixelWidth;
         height = Camera.main.pixelHeight;
 
-        numberOfObjects = 30;
+        objectsNumber = 30;
 
-        for (int i = 0; i < numberOfObjects; i++)
+        for (int i = 0; i < objectsNumber; i++)
         {
             int num = Random.Range(0,100);
             if (num < 50)
@@ -58,7 +58,14 @@ public class SquaresCreater : MonoBehaviour
         {
             float posX = Random.Range(10, width);
             float posY = Random.Range(10, height - 40);
-            Instantiate(obj, Camera.main.ScreenToWorldPoint(new Vector3(posX, posY, 10)), Quaternion.identity);
+
+            Collider2D[] hitColliders = Physics2D.OverlapCircleAll(Camera.main.ScreenToWorldPoint(new Vector2(posX, posY)), 1.0f);
+            if (hitColliders.Length == 0)
+            {
+                Instantiate(obj, Camera.main.ScreenToWorldPoint(new Vector3(posX, posY, 10)), Quaternion.identity);
+            }
+            else i--;
+               
         }
     }
 

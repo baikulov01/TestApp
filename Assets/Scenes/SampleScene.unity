@@ -252,6 +252,7 @@ GameObject:
   - component: {fileID: 519420030}
   - component: {fileID: 519420033}
   - component: {fileID: 519420034}
+  - component: {fileID: 519420035}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -354,7 +355,7 @@ MonoBehaviour:
   redSquare: {fileID: 4866285795415543421, guid: 90ee2515607fe03488f1c1b4aac6df5e, type: 3}
   greenSquare: {fileID: 7979193578090535168, guid: 98b047221aa9eb34eb8b1387b046fb48, type: 3}
   blueSquare: {fileID: 6994043267915905208, guid: 5039bd0f784cdef498a6c14726f792cb, type: 3}
-  numberOfObjects: 0
+  objectsNumber: 30
   width: 0
   height: 0
 --- !u!114 &519420034
@@ -371,6 +372,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   touchCount: 0
   touchText: {fileID: 451893194}
+--- !u!114 &519420035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27f2daf62666cc3418472135df088e7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  triangle: {fileID: 3826695183032325253, guid: cf547fc005a2a1941a6713bd8a59feb1, type: 3}
+  trianglesNumber: 7
+  width: 0
+  height: 0
 --- !u!1 &705056423
 GameObject:
   m_ObjectHideFlags: 0
@@ -472,6 +489,26 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &786270579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 786270577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01b7766bb13cefc4eb096052d29f96b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentTarget: {x: 0, y: 0, z: 0}
+  startPosition: {x: 0, y: 0, z: 0}
+  hasTarget: 0
+  movementSpeed: 4
+  isMoving: 0
+  firstCollectedObjectName: 
+  lastCollectedObjectName: 
+  squaresLeft: 0
 --- !u!1 &920737544
 GameObject:
   m_ObjectHideFlags: 0
@@ -988,5 +1025,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6630205864517216341, guid: 86d5229e7bf399343ac02a49bd49771c, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 86d5229e7bf399343ac02a49bd49771c, type: 3}

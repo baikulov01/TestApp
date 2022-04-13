@@ -32,6 +32,7 @@ public class TouchListener : MonoBehaviour
 
         if (Input.GetMouseButton(0))
         {
+
             if (Camera.main.ScreenToWorldPoint(Input.mousePosition).y >= 6.0f)
             {
                 return;
