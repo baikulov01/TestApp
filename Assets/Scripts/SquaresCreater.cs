@@ -57,7 +57,7 @@ public class SquaresCreater : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             float posX = Random.Range(10, width);
-            float posY = Random.Range(10, height - 40);
+            float posY = Random.Range(10, height - 80);
 
             Collider2D[] hitColliders = Physics2D.OverlapCircleAll(Camera.main.ScreenToWorldPoint(new Vector2(posX, posY)), 1.0f);
             if (hitColliders.Length == 0)

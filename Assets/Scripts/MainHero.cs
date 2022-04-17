@@ -9,17 +9,20 @@ public class MainHero : MonoBehaviour
     public bool hasTarget;
     public float movementSpeed;
     public bool isMoving;
+    bool firstGreenFlag;
 
     public string firstCollectedObjectName;
     public string lastCollectedObjectName;
 
     public Queue<Vector2> movementQueue;
     public int squaresLeft;
+    float lastTime;
 
 
     // Start is called before the first frame update
     void Start()
     {
+        lastTime = 0.3f;
         movementQueue = new Queue<Vector2>();
         startPosition = transform.position;
         squaresLeft = Camera.main.GetComponent<SquaresCreater>().objectsNumber+4;
@@ -27,8 +30,12 @@ public class MainHero : MonoBehaviour
 
     void Update()
     {
-        if (Input.touchCount > 0)
+        lastTime -= Time.deltaTime;
+        if (Time.timeScale == 0) return;
+
+        if (Input.touchCount > 0 )
         {
+            lastTime = 0.3f;
             Touch touch = Input.GetTouch(0);
             if (Camera.main.ScreenToWorldPoint(touch.position).y >= 6.0f)
             {
@@ -40,15 +47,16 @@ public class MainHero : MonoBehaviour
             }
         }
 
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0) && lastTime < 0.0f)
         {
-            if (Camera.main.ScreenToWorldPoint(Input.mousePosition).y >= 6.0f)
+        lastTime = 0.3f;
+        if (Camera.main.ScreenToWorldPoint(Input.mousePosition).y >= 6.0f)
             {
                 return;
             }
             movementQueue.Enqueue(Camera.main.ScreenToWorldPoint(Input.mousePosition));
 
-        }
+        }     
 
         if (!hasTarget)
         {
@@ -126,11 +134,12 @@ public class MainHero : MonoBehaviour
                 gameObject.transform.localScale += new Vector3(0.15f, 0.15f, 0);
                 break;
             case "GreenSquare":
-                if (firstCollectedObjectName.Equals("GreenSquare"))
+                if (firstCollectedObjectName.Equals("GreenSquare") && !firstGreenFlag)
                 {
                     Camera.main.GetComponent<TouchCounter>().touchCount--;
+                    firstGreenFlag = true;
                 } 
-                else if (lastCollectedObjectName.Equals("GreenSquare"))
+                if (lastCollectedObjectName.Equals("GreenSquare"))
                 {
                     Camera.main.GetComponent<TouchCounter>().touchCount++;
                 }
