@@ -9,23 +9,33 @@ public class MainHero : MonoBehaviour
     public bool hasTarget;
     public float movementSpeed;
     public bool isMoving;
+    bool firstGreenFlag;
+
+    public string firstCollectedObjectName;
+    public string lastCollectedObjectName;
 
     public Queue<Vector2> movementQueue;
+    public int squaresLeft;
+    float lastTime;
 
 
     // Start is called before the first frame update
     void Start()
     {
+        lastTime = 0.3f;
         movementQueue = new Queue<Vector2>();
         startPosition = transform.position;
+        squaresLeft = Camera.main.GetComponent<SquaresCreater>().objectsNumber+4;
     }
-
-
 
     void Update()
     {
-        if (Input.touchCount > 0)
+        lastTime -= Time.deltaTime;
+        if (Time.timeScale == 0) return;
+
+        if (Input.touchCount > 0 )
         {
+            lastTime = 0.3f;
             Touch touch = Input.GetTouch(0);
             if (Camera.main.ScreenToWorldPoint(touch.position).y >= 6.0f)
             {
@@ -33,47 +43,37 @@ public class MainHero : MonoBehaviour
             }
             if (touch.phase == TouchPhase.Ended)
             {
-                if (!hasTarget)
-                {
-                    hasTarget = true;
-                    currentTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                    currentTarget.z = transform.position.z;
-                }
-                else
-                {
-                    movementQueue.Enqueue(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                }
+                movementQueue.Enqueue(Camera.main.ScreenToWorldPoint(Input.mousePosition));
             }
         }
 
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0) && lastTime < 0.0f)
         {
-            if (Camera.main.ScreenToWorldPoint(Input.mousePosition).y >= 6.0f)
+        lastTime = 0.3f;
+        if (Camera.main.ScreenToWorldPoint(Input.mousePosition).y >= 6.0f)
             {
                 return;
             }
-            if (!hasTarget)
+            movementQueue.Enqueue(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+
+        }     
+
+        if (!hasTarget)
+        {
+            if (movementQueue.Count > 0)
             {
                 hasTarget = true;
-                currentTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                currentTarget.z = transform.position.z;
-            }
-            else
+                currentTarget = movementQueue.Dequeue();
+                isMoving = true;
+            } else
             {
-                movementQueue.Enqueue(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                isMoving = false;
             }
-
-        }
-
-        if (hasTarget)
+        } else
         {
             isMoving = true;
         }
-        else if(movementQueue.Count > 0)
-        {
-            currentTarget = movementQueue.Dequeue();
-            hasTarget = true;
-        }
+
 
         if (isMoving)
         {
@@ -89,10 +89,68 @@ public class MainHero : MonoBehaviour
         {
             hasTarget = false;
             isMoving = false;
-
-
             startPosition = transform.position;
         }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        string objectName = collision.gameObject.name;
+
+
+        if (firstCollectedObjectName.Equals(string.Empty))
+        {
+            firstCollectedObjectName = objectName;
+        }
+        if (squaresLeft==1)
+        {
+            lastCollectedObjectName = objectName;
+        }
+
+        switch (objectName)
+        {
+            case "Triangle":
+                isMoving = false;
+                transform.position = startPosition;
+                startPosition = transform.position;
+                hasTarget = false;
+                while (movementQueue.Count > 0)
+                {
+                    movementQueue.Dequeue();
+                }
+                GameObject[] marks = GameObject.FindGameObjectsWithTag("mark");
+                foreach (var item in marks)
+                {
+                    Destroy(item);
+                }
+                break;
+            case "RedSquare":
+                if (gameObject.transform.localScale.x > 0.4f)
+                {
+                    gameObject.transform.localScale -= new Vector3(0.15f, 0.15f, 0);
+                }
+                break;
+            case "BlueSquare":
+                gameObject.transform.localScale += new Vector3(0.15f, 0.15f, 0);
+                break;
+            case "GreenSquare":
+                if (firstCollectedObjectName.Equals("GreenSquare") && !firstGreenFlag)
+                {
+                    Camera.main.GetComponent<TouchCounter>().touchCount--;
+                    firstGreenFlag = true;
+                } 
+                if (lastCollectedObjectName.Equals("GreenSquare"))
+                {
+                    Camera.main.GetComponent<TouchCounter>().touchCount++;
+                }
+                break;
+        }
+
+        if (!objectName.Equals("Triangle"))
+        {
+            Destroy(collision.gameObject);
+            squaresLeft--;
+        }      
     }
 
 }
